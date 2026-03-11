@@ -32,8 +32,8 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void play(Song song) {
-    recentIds.remove(song.id);
-    recentIds.insert(0, song.id);
+    // recentIds.remove(song.id);
+    // recentIds.insert(0, song.id);
     onPlayerChange();
     notifyListeners();
     playerState.start(song);
