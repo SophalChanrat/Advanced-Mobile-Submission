@@ -31,6 +31,7 @@ class SongTile extends StatelessWidget {
             isPlaying ? "Playing" : "",
             style: TextStyle(color: Colors.amber),
           ),
+          subtitle: Text('${song.artistName} - ${song.artistGenre}'),
         ),
       ),
     );

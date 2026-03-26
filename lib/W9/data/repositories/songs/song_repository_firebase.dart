@@ -16,18 +16,35 @@ class SongRepositoryFirebase extends SongRepository {
 
   @override
   Future<List<Song>> fetchSongs() async {
-    final http.Response response = await http.get(songsUri);
+    final http.Response songResponse = await http.get(songsUri);
+    final http.Response artistReponse = await http.get(artistsUri);
 
-    if (response.statusCode == 200) {
+    if (songResponse.statusCode == 200 && artistReponse.statusCode == 200) {
       // 1 - Send the retrieved list of songs
-      Map<String, dynamic> songJson = json.decode(response.body);
+      Map<String, dynamic> songJson = json.decode(songResponse.body);
+      Map<String, dynamic> artistJson = json.decode(artistReponse.body);
       List<Song> result = [];
 
       for (var iterable in songJson.entries) {
         String id = iterable.key;
-        Map<String, dynamic> data = iterable.value;
+        Map<String, dynamic> songData = iterable.value;
 
-        result.add(SongDto.fromJson(id, data));
+        Song song = SongDto.fromJson(id, songData);
+
+        Map<String, dynamic>? artistData = artistJson[song.artistId];
+        
+        if (artistData != null) {
+          song = Song(
+            id: song.id,
+            title: song.title,
+            artistId: song.artistId,
+            duration: song.duration,
+            imageUrl: song.imageUrl,
+            artistName: artistData['name'],
+            artistGenre: artistData['genre'],
+          );
+        }
+        result.add(song);
       }
 
       return result;
