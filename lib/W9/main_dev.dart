@@ -1,4 +1,6 @@
 import 'package:provider/provider.dart';
+import 'package:submission/W9/data/repositories/artists/artist_repository.dart';
+import 'package:submission/W9/data/repositories/artists/artist_repository_firebase.dart';
  
 import 'data/repositories/songs/song_repository_firebase.dart';
 import 'main_common.dart';
@@ -12,6 +14,8 @@ List<InheritedProvider> get devProviders {
   final appSettingsRepository = AppSettingsRepositoryMock();
 
   return [
+
+    Provider<ArtistRepository>(create: (_) => ArtistRepositoryFirebase()),
  
     // 1 - Inject the song repository
     Provider<SongRepository>(create: (_) => SongRepositoryFirebase()),
