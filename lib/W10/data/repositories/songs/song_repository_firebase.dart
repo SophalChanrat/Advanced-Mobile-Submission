@@ -11,10 +11,16 @@ class SongRepositoryFirebase extends SongRepository {
     'fir-c216e-default-rtdb.asia-southeast1.firebasedatabase.app',
   );
 
+  List<Song>? _cachedSongs;  
+
   final Uri songsUri = baseUri.replace(path: 'songs.json');
 
   @override
-  Future<List<Song>> fetchSongs() async {
+  Future<List<Song>> fetchSongs({bool forceFetch = false}) async {
+    if (!forceFetch && _cachedSongs != null) {
+      return _cachedSongs!;
+    }
+
     final http.Response response = await http.get(songsUri);
 
     if (response.statusCode == 200) {
@@ -25,6 +31,8 @@ class SongRepositoryFirebase extends SongRepository {
       for (final entry in songJson.entries) {
         result.add(SongDto.fromJson(entry.key, entry.value));
       }
+
+      _cachedSongs = result;
       return result;
     } else {
       // 2- Throw expcetion if any issue
@@ -56,6 +64,8 @@ class SongRepositoryFirebase extends SongRepository {
           if (patchRes.statusCode != 200) {
             throw Exception('Failed to like the song');
           }
+
+          _cachedSongs = null;
           return;
         }
       }
